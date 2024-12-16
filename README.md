@@ -60,6 +60,8 @@ require("browsher").setup({
     ---   3. Relative file path
     --- - `single_line_format`: Format string for a single line (e.g., `#L%d`).
     --- - `multi_line_format`: Format string for multiple lines (e.g., `#L%d-L%d`).
+    --- - `ssh_user`: Custom SSH username to match against for repos with an SSH origin.
+    ---   The usernames `git`, `gitea`, and `forgejo` will always be matched. Can be `nil`.
     ---
     --- Example:
     --- ```lua
@@ -75,11 +77,13 @@ require("browsher").setup({
             url_template = "%s/blob/%s/%s",
             single_line_format = "#L%d",
             multi_line_format = "#L%d-L%d",
+            ssh_user = nil,
         },
         ["gitlab.com"] = {
             url_template = "%s/-/blob/%s/%s",
             single_line_format = "#L%d",
             multi_line_format = "#L%d-%d",
+            ssh_user = nil,
         },
     },
 })

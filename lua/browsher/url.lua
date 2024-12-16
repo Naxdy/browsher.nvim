@@ -6,7 +6,7 @@ local utils = require("browsher.utils")
 ---
 ---@param remote_url string The remote URL to sanitize.
 ---@return string The sanitized remote URL.
-function M.sanitize_remote_url(remote_url)
+function M.sanitize_remote_url(remote_url, ssh_user)
     remote_url = remote_url:gsub("%.git$", "")
     remote_url = remote_url:gsub("^git@(.-):(.*)$", "https://%1/%2")
     remote_url = remote_url:gsub("^ssh://git@(.-)/(.*)$", "https://%1/%2")
@@ -16,6 +16,12 @@ function M.sanitize_remote_url(remote_url)
     remote_url = remote_url:gsub("^ssh://forgejo@(.-)/(.*)$", "https://%1/%2")
     remote_url = remote_url:gsub("git://(.-)/(.*)$", "https://%1/%2")
     remote_url = remote_url:gsub("https?://[^@]+@", "https://")
+
+    if ssh_user ~= nil then
+      remote_url = remote_url:gsub("^" .. ssh_user .. "@(.-):(.*)$", "https://%1/%2")
+      remote_url = remote_url:gsub("^ssh://" .. ssh_user .. "@(.-)/(.*)$", "https://%1/%2")
+    end
+
     return remote_url
 end
 
@@ -38,7 +44,6 @@ end
 ---@param line_info table|nil Table containing line information (line_number or start_line and end_line).
 ---@return string|nil The constructed URL, or nil if unsupported provider.
 function M.build_url(remote_url, branch_or_tag, relative_path, line_info)
-    remote_url = M.sanitize_remote_url(remote_url)
     branch_or_tag = M.url_encode(branch_or_tag)
     relative_path = M.url_encode(relative_path)
 
@@ -46,6 +51,7 @@ function M.build_url(remote_url, branch_or_tag, relative_path, line_info)
 
     for provider, data in pairs(providers) do
         if remote_url:match(provider) then
+            remote_url = M.sanitize_remote_url(remote_url, data.ssh_user)
             local url = string.format(data.url_template, remote_url, branch_or_tag, relative_path)
             if line_info then
                 local line_part = ""

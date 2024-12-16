@@ -24,6 +24,8 @@ M.options = {
     ---   3. Relative file path
     --- - `single_line_format`: Format string for a single line (e.g., `#L%d`).
     --- - `multi_line_format`: Format string for multiple lines (e.g., `#L%d-L%d`).
+    --- - `ssh_user`: Custom SSH username to match against for repos with an SSH origin.
+    ---   The usernames `git`, `gitea`, and `forgejo` will always be matched. Can be `nil`.
     ---
     --- Example:
     --- ```lua
@@ -32,6 +34,7 @@ M.options = {
     ---     url_template = "%s/src/%s/%s",
     ---     single_line_format = "?line=%d",
     ---     multi_line_format = "?start=%d&end=%d",
+    ---     ssh_user = nil,
     ---   },
     --- }
     --- ```
@@ -40,11 +43,13 @@ M.options = {
             url_template = "%s/blob/%s/%s",
             single_line_format = "#L%d",
             multi_line_format = "#L%d-L%d",
+            ssh_user = nil,
         },
         ["gitlab.com"] = {
             url_template = "%s/-/blob/%s/%s",
             single_line_format = "#L%d",
             multi_line_format = "#L%d-%d",
+            ssh_user = nil,
         },
     },
 }
